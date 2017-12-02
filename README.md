@@ -1,7 +1,7 @@
-# nifi-parcel
-nifi-parcel is a CDH5.x parcel for Apache's NiFi system.
+# hwx-registry-parcel
+hwx-registry-parcel is a CDH5.x parcel for HortonWorks Schema Registry system.
 
-[![Build Status](https://travis-ci.org/nomr/nifi-parcel.svg?branch=master)](https://travis-ci.org/nomr/nifi-parcel)
+[![Build Status](https://travis-ci.org/nomr/hwx-registry-parcel.svg?branch=master)](https://travis-ci.org/nomr/hwx-registry-parcel)
 
 ## Requirements 
   - jq
@@ -13,6 +13,6 @@ nifi-parcel is a CDH5.x parcel for Apache's NiFi system.
   1. Run `make`
 
 ## Release Instructions
-  1. Tag the branch according to the format `v[nifi version]+nifi[parcel version]`.
+  1. Tag the branch according to the format `v[registry version]+registry[parcel version]`.
   2. Push it to github.
   3. Wait for Travis to build it.
