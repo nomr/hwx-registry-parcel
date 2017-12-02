@@ -1,10 +1,8 @@
 TAG:=$(shell git describe --tags | sed -e 's/^v//')
 TAG_DIST=$(shell echo $(TAG) | sed -r -e 's/.*-([[:digit:]]+)-g.*/\1/')
 TAG_HASH=$(shell echo $(TAG) | sed -r -e 's/^.*(g[0-9a-f]+|$$)/\1/')
-
-PKG=NIFI
-PKG_VERSION=$(shell echo $(TAG) | sed -r -e 's/\+nifi.*//')
-JQ_VERSION=1.5
+PKG=HWX_REGISTRY
+PKG_VERSION=$(shell echo $(TAG) | sed -r -e 's/\+registry.*//')
 VERSION=$(subst +,-,$(TAG))
 
 ifeq ($(TRAVIS), true)
@@ -30,7 +28,7 @@ info:
 	@echo '       Parcels: $(PARCELS)'
 
 clean:
-	rm -rf release $(PKG)-*
+	rm -rf release $(PKG)-* registry-$(PKG_VERSION)
 
 release: $(foreach PARCEL,$(PARCELS),release/$(PARCEL)) release/manifest.json
 
@@ -49,20 +47,16 @@ $(PKG)-$(VERSION).parcel: $(PKG)-$(VERSION)/meta
 
 $(PKG)-$(VERSION)/meta: $(PKG)-$(VERSION) meta validator.jar 
 	@mkdir $@
-	cp meta/nifi_env.sh $@
+	cp meta/hwx_registry_env.sh $@
 	cat meta/parcel.json | jq ".version=\"$(VERSION)\"" > $@/parcel.json
 	java -jar validator.jar -p $@/parcel.json || (rm -rf $@ && false)
 
-$(PKG)-$(VERSION): nifi-$(PKG_VERSION) nifi-toolkit-$(PKG_VERSION) jq-$(JQ_VERSION)-linux64
+$(PKG)-$(VERSION): registry-$(PKG_VERSION)
 	rm -rf $@
-	mkdir -p $@/lib $@/bin
-	mv jq-$(JQ_VERSION)-linux64 $@/bin/jq
+	mkdir -p $@
+	mv registry-$(PKG_VERSION)/* $@
+	find $@ -type f -exec chmod 644 {} \;
 	find $@/bin -type f -exec chmod 755 {} \;
-	cp -avf xslt $@/lib/nifi-xslt
-	mv nifi-$(PKG_VERSION) $@/lib/nifi
-	mv nifi-toolkit-$(PKG_VERSION) $@/lib/nifi-toolkit
-	find $@/lib/nifi-toolkit/bin -type f -exec chmod 755 {} \;
-	find $@/lib/nifi-toolkit/classpath -type f -exec chmod 644 {} \;
 
 # Remote dependencies
 validator.jar:
@@ -72,26 +66,19 @@ validator.jar:
 make_manifest.py:
 	ln tools/cm_ext/make_manifest/make_manifest.py
 
-jq-$(JQ_VERSION)-linux64: jq-$(JQ_VERSION)-SHA256
-	wget 'https://github.com/stedolan/jq/releases/download/jq-$(JQ_VERSION)/jq-linux64' -O $@
+registry-$(PKG_VERSION).tar.gz: registry-$(PKG_VERSION).tar.gz-SHA256
+	wget 'https://github.com/hortonworks/registry/releases/download/v$(PKG_VERSION)/$@' -O $@
 	touch $@
 	sha256sum -c $<
 
-nifi-$(PKG_VERSION)-bin.tar.gz: nifi-$(PKG_VERSION)-bin.tar.gz-SHA256
-	wget 'https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=nifi/$(PKG_VERSION)/$@' -O $@
-	touch $@
-	sha256sum -c $<
-
-nifi-toolkit-$(PKG_VERSION)-bin.tar.gz: nifi-toolkit-$(PKG_VERSION)-bin.tar.gz-SHA256
-	wget 'https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=nifi/$(PKG_VERSION)/$@' -O $@
-	touch $@
-	sha256sum -c $<
-
+registry-$(PKG_VERSION): registry-$(PKG_VERSION).tar.gz
+	tar --no-same-permission --no-same-owner -zxvf $<
+	mv hortonworks-$@-SNAPSHOT $@
 
 # Implicit rules
 %-SHA256: SHA256SUMS
 	grep $(subst -SHA256,,$@) SHA256SUMS > $@
 
-%: %-bin.tar.gz
-	tar -zxvf $<
+%: %.tar.gz
+	tar --no-same-permission --no-same-owner -zxvf $<
 	find $@/lib -type f -exec chmod o+r {} \;

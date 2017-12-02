@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "name": "NIFI",
+  "name": "HWX_REGISTRY",
   "setActiveSymlink": true,
 
   "depends": "CDH",
@@ -8,56 +8,32 @@
   "conflicts": "",
 
   "provides": [
-    "nifi",
-    "nifi-toolkit"
+    "hwx-registry"
   ],
 
   "scripts": {
-    "defines": "nifi_env.sh"
+    "defines": "hwx_registry_env.sh"
   },
 
   "packages": [
     {
-      "name": "jq",
-      "version": "1.5"
-    },
-    {
-      "name": "nifi",
-      "version": "1.4.0"
-    },
-    {
-      "name": "nifi-toolkit",
-      "version": "1.4.0"
+      "name": "registry",
+      "version": "0.4.0"
     }
   ],
 
   "components": [
     {
-      "name": "jq",
-      "version": "1.5"
-    },
-    {
-      "name": "nifi",
-      "version": "1.4.0",
-      "pkg_version": "1.4.0"
-    },
-    {
-      "name": "nifi-toolkit",
-      "version": "1.4.0",
-      "pkg_version": "1.4.0"
+      "name": "registry",
+      "version": "0.4.0",
+      "pkg_version": "0.4.0"
     }
   ],
 
   "users": {
-    "nifi": {
-      "longname": "Apache NiFi",
-      "home": "/var/lib/nifi",
-      "shell": "/bin/bash",
-      "extra_groups": [ ]
-    },
-    "nifi-ca": {
-      "longname": "Apache NiFi CA",
-      "home": "/var/lib/nifi-ca",
+    "hwx-registry": {
+      "longname": "HortonWorks Registry",
+      "home": "/var/lib/hwx-registry",
       "shell": "/bin/bash",
       "extra_groups": [ ]
     }

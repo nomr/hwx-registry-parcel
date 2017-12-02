@@ -3,9 +3,9 @@ csd/images/icon.png
 
 # Release and intermediates
 release
-NIFI-*
+HWX_REGISTRY-*
 # Remote binaries
-nifi-*.tar.gz
+registry-*.tar.gz
 
 # SHA256 SUMS
 *-SHA256
