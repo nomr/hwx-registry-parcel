@@ -66,13 +66,15 @@ validator.jar:
 make_manifest.py:
 	ln tools/cm_ext/make_manifest/make_manifest.py
 
-registry-$(PKG_VERSION).tar.gz: registry-$(PKG_VERSION).tar.gz-SHA256
+hortonworks-registry-$(PKG_VERSION).tar.gz: hortonworks-registry-$(PKG_VERSION).tar.gz-SHA256
 	wget 'https://github.com/hortonworks/registry/releases/download/v$(PKG_VERSION)/$@' -O $@
 	touch $@
 	sha256sum -c $<
 
-registry-$(PKG_VERSION): registry-$(PKG_VERSION).tar.gz
+registry-$(PKG_VERSION): hortonworks-registry-$(PKG_VERSION).tar.gz
 	tar --no-same-permission --no-same-owner -zxvf $<
+	mv hortonworks-$@ $@
+
 
 # Implicit rules
 %-SHA256: SHA256SUMS
