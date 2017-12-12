@@ -73,7 +73,6 @@ registry-$(PKG_VERSION).tar.gz: registry-$(PKG_VERSION).tar.gz-SHA256
 
 registry-$(PKG_VERSION): registry-$(PKG_VERSION).tar.gz
 	tar --no-same-permission --no-same-owner -zxvf $<
-	mv hortonworks-$@-SNAPSHOT $@
 
 # Implicit rules
 %-SHA256: SHA256SUMS
